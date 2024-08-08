@@ -1,5 +1,5 @@
-### cd /Users/aarushgupta/Library/CloudStorage/GoogleDrive-itsaarush.g@gmail.com/My Drive/HeatEquation
-### python "6(Save to Folder)" --dx _ _ _ --dt _ _ _ --Therm_Diff _ _ _
+### cd "PUT PATH"
+### python "PUT PYTHON SCRIPT NAME" --dx _ _ _ --dt _ _ _ --Therm_Diff _ _ _ (The _ denotes the dx, dt, and Therm_Diff value you want to run)
 
 import torch
 import numpy as np
@@ -22,7 +22,7 @@ def run(dx, dt, Therm_Diff):
     D = Therm_Diff
 
     # Path to your Google Drive
-    google_drive_path = '/Users/aarushgupta/Library/CloudStorage/GoogleDrive-itsaarush.g@gmail.com/My Drive/HeatEquation'
+    google_drive_path = 'PUT PATH'
 
     # Name of the new folder
     new_folder = f'dx={delta_X}_dt={delta_T}_D={D}'
@@ -419,6 +419,3 @@ if __name__ == "__main__":
             for Therm_Diff in args.Therm_Diff:
                 print(f"Running with dx={dx}, dt={dt}, Therm_Diff={Therm_Diff}")
                 run(dx, dt, Therm_Diff)
-
-
-#/Users/aarushgupta/Desktop/'Heat Equation PINN'/'heat_pinn_aarush.py'
