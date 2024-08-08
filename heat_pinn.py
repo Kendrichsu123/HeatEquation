@@ -13,6 +13,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import time
 import os
 import argparse
+import csv
 
 def run(dx, dt, Therm_Diff):
    
@@ -23,6 +24,8 @@ def run(dx, dt, Therm_Diff):
 
     # Path to your Google Drive
     google_drive_path = 'PUT PATH'
+
+    file_name = 'loss.csv'
 
     # Name of the new folder
     new_folder = f'dx={delta_X}_dt={delta_T}_D={D}'
@@ -43,7 +46,7 @@ def run(dx, dt, Therm_Diff):
         os.makedirs(new_folder_path)
 
     x = torch.linspace(0, 1, round(1/delta_X))  # round(1/delta_X) + 1) Adjusting for inclusive end point
-    t = torch.linspace(0, 10, round(1/delta_T))  # round(1/delta_T) + 1) Adjusting for inclusive end point
+    t = torch.linspace(0, 1, round(1/delta_T))  # round(1/delta_T) + 1) Adjusting for inclusive end point
 
     X_grid, T_grid = torch.meshgrid(x, t, indexing='ij') # matrix of values
     X_flat = X_grid.flatten().view(-1, 1)
@@ -66,7 +69,7 @@ def run(dx, dt, Therm_Diff):
     plt.rcParams.update({'font.size': 12})
 
     X_overall = torch.linspace(0, 1, 300)
-    T_overall = torch.linspace(0, 10, 300)
+    T_overall = torch.linspace(0, 1, 300)
 
     X_overall_grid, T_overall_grid = torch.meshgrid(X_overall, T_overall, indexing='ij')
 
@@ -252,11 +255,18 @@ def run(dx, dt, Therm_Diff):
     ['Total Loss', losses[-1]],
     ['Max Discrepancy', max_disc]
     ]
+
+    with open(file_name, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(MSE_data)
+
     fig, ax = plt.subplots()
 
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
     ax.set_frame_on(False)
+
+
 
     table = plt.table(cellText=MSE_data, cellLoc='center', loc='center')
 
@@ -419,3 +429,4 @@ if __name__ == "__main__":
             for Therm_Diff in args.Therm_Diff:
                 print(f"Running with dx={dx}, dt={dt}, Therm_Diff={Therm_Diff}")
                 run(dx, dt, Therm_Diff)
+
