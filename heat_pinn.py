@@ -23,9 +23,11 @@ def run(dx, dt, Therm_Diff):
     D = Therm_Diff
 
     # Path to your Google Drive
-    google_drive_path = 'PUT PATH'
+    google_drive_path = 'PUT YOUR PATH'
 
     file_name = 'loss.csv'
+    file_path = os.path.join(google_drive_path, file_name)
+    os.makedirs(google_drive_path, exist_ok=True)
 
     # Name of the new folder
     new_folder = f'dx={delta_X}_dt={delta_T}_D={D}'
@@ -241,7 +243,7 @@ def run(dx, dt, Therm_Diff):
 
     mse_dp = criterion(u_dp, u_gt_dp).item()
 
-    max_disc = torch.max(torch.abs(u_dp - u_gt_dp))
+    max_disc = torch.max(torch.abs(u_dp - u_gt_dp)).item()
 
     print(f"Overall MSE: {mse_overall}")
     print(f'Data Point MSE: {mse_dp}')
@@ -256,7 +258,7 @@ def run(dx, dt, Therm_Diff):
     ['Max Discrepancy', max_disc]
     ]
 
-    with open(file_name, mode='a', newline='') as file:
+    with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(MSE_data)
 
