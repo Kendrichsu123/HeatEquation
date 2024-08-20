@@ -25,7 +25,7 @@ def run(dx, dt, Therm_Diff):
     # Path to your Google Drive
     google_drive_path = 'PUT YOUR PATH'
 
-    file_name = 'loss.csv'
+    file_name = f'loss{delta_X}_{delta_T}.csv'
     file_path = os.path.join(google_drive_path, file_name)
     os.makedirs(google_drive_path, exist_ok=True)
 
