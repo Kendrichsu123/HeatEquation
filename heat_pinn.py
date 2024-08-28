@@ -15,7 +15,7 @@ import os
 import argparse
 import csv
 
-def run(dx, dt, Therm_Diff):
+def run(dx, dt, Therm_Diff, epochs):
    
     # Data Preparation
     delta_X = dx
@@ -23,10 +23,9 @@ def run(dx, dt, Therm_Diff):
     D = Therm_Diff
 
     # Path to your Google Drive
-    google_drive_path = 'PUT YOUR PATH'
+    google_drive_path = './runs'
 
-    file_name = f'loss{delta_X}_{delta_T}_{D}.csv'
-    file_path = os.path.join(google_drive_path, file_name)
+    
     os.makedirs(google_drive_path, exist_ok=True)
 
     # Name of the new folder
@@ -103,9 +102,10 @@ def run(dx, dt, Therm_Diff):
     ]
     ax.legend(proxy_artists, ['Data', 'Ground truth'])
 
-    plt.tight_layout()
-    plt.savefig(os.path.join(new_folder_path, 'heat_3d_datagt.eps'))
+    fig.tight_layout()
+    fig.savefig(os.path.join(new_folder_path, 'heat_3d_datagt.png'))
     #plt.show()
+    plt.close()
 
     #Visualizing temperature distribution over time
     vals = [0.0, 0.4, 0.8]
@@ -121,7 +121,8 @@ def run(dx, dt, Therm_Diff):
     plt.ylabel('Temperature')
     plt.legend()
     plt.tight_layout()
-    plt.savefig(os.path.join(new_folder_path, 'heat_temp_space.eps'))
+    plt.savefig(os.path.join(new_folder_path, 'heat_temp_space.png'))
+    plt.close()
     #plt.show()
 
 
@@ -135,7 +136,8 @@ def run(dx, dt, Therm_Diff):
 
 
     plt.tight_layout()
-    plt.savefig(os.path.join(new_folder_path, 'heat_temp_time.eps'))
+    plt.savefig(os.path.join(new_folder_path, 'heat_temp_time.png'))
+    plt.close()
     #plt.show()
 
     #set up net class
@@ -172,6 +174,7 @@ def run(dx, dt, Therm_Diff):
             du_dx = torch.autograd.grad(outputs=self(x_input,t_input), inputs=x_input, grad_outputs=torch.ones_like(self(x_input,t_input)), create_graph=True, retain_graph=True)[0]
             d2u_dx2 = torch.autograd.grad(outputs=du_dx, inputs=x_input, grad_outputs=torch.ones_like(du_dx), create_graph=True, retain_graph=True)[0]
             return du_dt, d2u_dx2
+        
     d, w = 5, 80
     model = Net(d, w)
     criterion = nn.MSELoss()
@@ -209,7 +212,6 @@ def run(dx, dt, Therm_Diff):
 
         return losses
 
-    epochs = 2500
     lambda_reg = 1
     st = time.time()
     losses = train(model, criterion, optimizer, epochs, lambda_reg)
@@ -221,7 +223,8 @@ def run(dx, dt, Therm_Diff):
     plt.title('Training Loss Over Epochs', fontsize=15)
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
-    plt.savefig(os.path.join(new_folder_path, 'heat_loss_epochs.eps'))
+    plt.savefig(os.path.join(new_folder_path, 'heat_loss_epochs.png'))
+    plt.close()
     #plt.show()
 
     #calculate MSE using data
@@ -258,6 +261,9 @@ def run(dx, dt, Therm_Diff):
     ['Max Discrepancy', max_disc]
     ]
 
+    # save table to csv
+    file_name = f'loss{delta_X}_{delta_T}_{D}.csv'
+    file_path = os.path.join(new_folder_path, file_name)
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(MSE_data)
@@ -275,8 +281,8 @@ def run(dx, dt, Therm_Diff):
     table.auto_set_font_size(False)
     table.set_fontsize(12)
     table.auto_set_column_width([0, 1])
-    plt.savefig(os.path.join(new_folder_path, 'MSE_Data_LossTable.eps'))
-    #plt.show()
+    plt.savefig(os.path.join(new_folder_path, 'MSE_Data_LossTable.png'))
+    plt.close()
 
     # Plots neural network with ground truth and data
 
@@ -306,7 +312,8 @@ def run(dx, dt, Therm_Diff):
 
     plt.suptitle('NN Performance At Varying Time and Space Values', fontsize=15)
     plt.tight_layout()
-    plt.savefig(os.path.join(new_folder_path, 'heat_pinn_time_space.eps'))
+    plt.savefig(os.path.join(new_folder_path, 'heat_pinn_time_space.png'))
+    plt.close()
     #plt.show()
 
     # Plotting neural network with data
@@ -342,7 +349,7 @@ def run(dx, dt, Therm_Diff):
     plt.tight_layout()
 
     # Save and show plot
-    #plt.savefig(f"{images_dir}/heat_pinndata.eps")
+    #plt.savefig(f"{images_dir}/heat_pinndata.png")
     #plt.show()
 
     # Plotting neural network with data
@@ -379,7 +386,8 @@ def run(dx, dt, Therm_Diff):
     plt.tight_layout()
 
     # Save and show plot
-    plt.savefig(os.path.join(new_folder_path, 'heat_pinndata2.eps'))
+    plt.savefig(os.path.join(new_folder_path, 'heat_pinndata2.png'))
+    plt.close()
     #plt.show()
 
     plt.figure(figsize=(8, 6))
@@ -414,7 +422,8 @@ def run(dx, dt, Therm_Diff):
 
     plt.suptitle('Residual After Training At Varying Space and Time Values', fontsize=15)
     plt.tight_layout()
-    plt.savefig(os.path.join(new_folder_path, 'residual.eps'))
+    plt.savefig(os.path.join(new_folder_path, 'residual.png'))
+    plt.close()
     #plt.show()
 
 if __name__ == "__main__":
@@ -423,6 +432,7 @@ if __name__ == "__main__":
     parser.add_argument('--dx', type=float, nargs='+', help="Delta x values")
     parser.add_argument('--dt', type=float, nargs='+', help="Delta t values")
     parser.add_argument('--Therm_Diff', type=float, nargs='+', help="Thermal Diffusivity values")
+    parser.add_argument('--epochs', type=int, default=2500, help="Number of epochs (default: 2500)")
     
     args = parser.parse_args()
     
@@ -430,5 +440,5 @@ if __name__ == "__main__":
         for dt in args.dt:
             for Therm_Diff in args.Therm_Diff:
                 print(f"Running with dx={dx}, dt={dt}, Therm_Diff={Therm_Diff}")
-                run(dx, dt, Therm_Diff)
+                run(dx, dt, Therm_Diff, args.epochs)
 

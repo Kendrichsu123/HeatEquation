@@ -1,5 +1,5 @@
 % Define the folder paths containing the CSV files
-folder_paths = PUT FILE PATH
+folder_paths = "/Users/Ray/project/pinnheat/D,dt_Grid_csv"
 
 % Initialize arrays to store the data
 dx_values = [];
@@ -32,7 +32,7 @@ for j = 1:length(files)
     file_path = fullfile(files(j).folder, files(j).name);
     data = readtable(file_path);
     max_errors = [max_errors, data{4, 'Var2'}];
-    MSE_values = [MSE_values, data{2, 'Var2'}];
+    MSE_values = [MSE_values, data{1, 'Var2'}];
     [~, file_name] = fileparts(file_path);
     pattern = '\d*\.?\d+';
     values = str2double(regexp(file_name, pattern, 'match'));
@@ -41,38 +41,24 @@ for j = 1:length(files)
     D_values = [D_values, values(3)];
 end
 
+% Get number of unique values for each parameter
+N = length(dx_values);
+nt = length(unique(dt_values));
+nD = length(unique(D_values));
 
+% Reshape the 1D arrays to create a grid for contour plots
+dt_grid = reshape(dt_values, nD, nt);
+D_grid = reshape(D_values, nD, nt);
 
+mse_grid = reshape(MSE_values, nD,nt);
+mae_grid = reshape(max_errors, nD,nt);
 
-%Create a grid for dx, dt, and D
-[dx_grid, dt_grid] = meshgrid(dx_values, dt_values);
-[max_errors_grid, MSE_values_grid] = meshgrid(max_errors, MSE_values);
-% % Initialize grids for max_error and MSE
-% max_error_grid = NaN(size(dx_grid)); % Use NaN to identify missing data
-% MSE_grid = NaN(size(dx_grid));
-% 
-% % Populate the grids with data
-% for i = 1:length(dx_values)
-%     row = find(unique(dt_values) == dt_values(i));
-%     col = find(unique(dx_values) == dx_values(i));
-%     max_error_grid(row, col) = max_errors(i);
-%     MSE_grid(row, col) = MSE_values(i);
-% end
-
-
-
-% Plot the contour for max error discrepancy
-figure;
-contourf(dx_grid, dt_grid, max_errors_grid, 'ShowText', 'on');
-colorbar;
-xlabel('dx');
-ylabel('dt');
-title('Max Error Discrepancy Contour Plot');
-
-% Plot the contour for MSE
-figure;
-contourf(dx_grid, dt_grid, MSE_values_grid, 'ShowText', 'on');
-colorbar;
-xlabel('dx');
-ylabel('dt');
-title('Mean Squared Error (MSE) Contour Plot');
+contourf(dt_grid, D_grid, log10(mse_grid), 'ShowText', 'on');
+xlabel('dt')
+ylabel('D')
+title("log10(MSE)")
+%%
+contourf(dt_grid, D_grid, log10(mae_grid), 'ShowText', 'on');
+xlabel('dt')
+ylabel('D')
+title("log10(MAE)")
