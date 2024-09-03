@@ -238,8 +238,8 @@ def run(dx, dt, Therm_Diff, epochs):
 
     mse_overall = criterion(u_overall, u_ground_truth).item()
 
-    u_dp = model(X_flat, T_flat)
-    u_gt_dp = exact(X_flat, T_flat)
+    u_dp = model(X_overall, T_overall)
+    u_gt_dp = exact(X_overall, T_overall)
 
     u_dp = u_dp.view(-1)
     u_gt_dp = u_gt_dp.view(-1)
