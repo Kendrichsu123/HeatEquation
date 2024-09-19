@@ -1,7 +1,7 @@
 %% 
 
 % Define the folder path containing the CSV files
-folder_path = "/Users/kendrichsu/Downloads/dx,dt_csv"
+folder_path = "PUT PATH HERE"
 
 % Initialize arrays to store the data
 dx_values = [];
