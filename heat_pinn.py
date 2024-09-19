@@ -14,6 +14,7 @@ import time
 import os
 import argparse
 import csv
+import shutil
 
 def run(dx, dt, Therm_Diff, epochs):
    
@@ -45,6 +46,14 @@ def run(dx, dt, Therm_Diff, epochs):
 
     if not os.path.exists(new_folder_path):
         os.makedirs(new_folder_path)
+
+   # Create a separate folder for all CSV files
+    csv_folder_path = os.path.join(google_drive_path, 'All_CSV_Files')
+    if not os.path.exists(csv_folder_path):
+        os.makedirs(csv_folder_path)    
+      
+    file_name = f'loss{delta_X}_{delta_T}_{D}.csv'
+    file_path = os.path.join(new_folder_path, file_name)
 
     x = torch.linspace(0, 1, round(1/delta_X))  # round(1/delta_X) + 1) Adjusting for inclusive end point
     t = torch.linspace(0, 1, round(1/delta_T))  # round(1/delta_T) + 1) Adjusting for inclusive end point
@@ -267,6 +276,8 @@ def run(dx, dt, Therm_Diff, epochs):
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerows(MSE_data)
+   # Copy CSV file to the separate CSV folder
+    shutil.copy2(file_path, os.path.join(csv_folder_path, file_name)) 
 
     fig, ax = plt.subplots()
 
