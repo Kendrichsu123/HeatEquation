@@ -19,6 +19,10 @@ import shutil
 # Set default tensor type to double precision
 torch.set_default_dtype(torch.float64)
 
+# For reproducibility across devices (CPU/GPU)
+torch.manual_seed(0)
+np.random.seed(0)
+
 def run(dx, dt, Therm_Diff, epochs):
    
     # Data Preparation
