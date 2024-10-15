@@ -14,7 +14,7 @@ import csv
 import shutil
 
 # Path to your Google Drive
-google_drive_path = '/Users/kendrichsu/Library/CloudStorage/GoogleDrive-kendrichsu@gmail.com/My Drive/testers'
+google_drive_path = 'Path'
 
 def run(dx, dt, D, seed):
     torch.manual_seed(seed)
@@ -24,8 +24,6 @@ def run(dx, dt, D, seed):
     delta_X = dx
     delta_T = dt
 
-  #  # Path to your Google Drive
-  #  google_drive_path = '/Users/kendrichsu/Library/CloudStorage/GoogleDrive-kendrichsu@gmail.com/My Drive/dx,dtgrid0-4seedgrid'
 
     # Name of the new folder
     new_folder = f'dx={delta_X}_dt={delta_T}_D={D}'
