@@ -24,7 +24,7 @@ def run(dx, dt, Therm_Diff):
     D = Therm_Diff
 
     # Path to your Google Drive
-    google_drive_path = 'PUT PATH'
+    google_drive_path = '/Users/aarushgupta/Library/CloudStorage/GoogleDrive-itsaarush.g@gmail.com/My Drive/Ray | Heat Equation PINN/HeatEquation/Replicate_PINN'
 
     file_name = f'loss{delta_X}_{delta_T}_{D}.csv'
     file_path = os.path.join(google_drive_path, file_name)
@@ -383,15 +383,12 @@ def run(dx, dt, Therm_Diff):
     plt.savefig(os.path.join(new_folder_path, 'heat_pinndata2.eps'))
     #plt.show()
 
-    data_to_save = {
-    'X_grid': X_grid.numpy().flatten(),
-    'T_grid': T_grid.numpy().flatten(),
-    'Exact': exact(X_grid, T_grid).numpy().flatten(),
-    'PINN Predictions': predictions.flatten()
-}
+    np.savetxt(os.path.join(new_folder_path, 'X_grid.csv'), X_grid.numpy(), delimiter=',', header='X_grid', comments='')
+    np.savetxt(os.path.join(new_folder_path, 'T_grid.csv'), T_grid.numpy(), delimiter=',', header='T_grid', comments='')
+    np.savetxt(os.path.join(new_folder_path, 'Exact.csv'), exact(X_grid, T_grid).numpy(), delimiter=',', header='Exact', comments='')
+    np.savetxt(os.path.join(new_folder_path, 'PINN_Predictions.csv'), predictions.flatten(), delimiter=',', header='PINN Predictions', comments='')
 
-    df = pd.DataFrame(data_to_save)
-    df.to_csv(os.path.join(new_folder_path, 'heat_pinndata2.csv'), index=False)
+    print("Data saved to separate CSV files.")
 
     plt.figure(figsize=(8, 6))
 
@@ -442,7 +439,3 @@ if __name__ == "__main__":
             for Therm_Diff in args.Therm_Diff:
                 print(f"Running with dx={dx}, dt={dt}, Therm_Diff={Therm_Diff}")
                 run(dx, dt, Therm_Diff)
-
-
-
-
