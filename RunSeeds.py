@@ -13,8 +13,11 @@ import argparse
 import csv
 import shutil
 
+# Set default tensor type to double precision
+torch.set_default_dtype(torch.float64)
+
 # Path to your Google Drive
-google_drive_path = 'Path'
+google_drive_path = #your path
 
 def run(dx, dt, D, seed):
     torch.manual_seed(seed)
@@ -24,6 +27,8 @@ def run(dx, dt, D, seed):
     delta_X = dx
     delta_T = dt
 
+  #  # Path to your Google Drive
+  #  google_drive_path = '/Users/kendrichsu/Library/CloudStorage/GoogleDrive-kendrichsu@gmail.com/My Drive/dx,dtgrid0-4seedgrid'
 
     # Name of the new folder
     new_folder = f'dx={delta_X}_dt={delta_T}_D={D}'
