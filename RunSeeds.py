@@ -1,4 +1,4 @@
-#sudo python RunSeeds --dx 0.1 0.2 --dt 0.1 0.2 --D 0.1 --seeds 0 1 2
+#Example Command Prompt: sudo python RunSeeds --dx 0.1 0.2 --dt 0.1 0.2 --D 0.1 --seeds 0 1 2
 
 # Data obtained and used for post-processing is in the file "All_CSV_Files_AvgSeed"
 
