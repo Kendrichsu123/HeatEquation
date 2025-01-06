@@ -1,5 +1,5 @@
 % Define the folder path containing the CSV files
-folder_path = "Path(All_CSV_Files_AvgSeed)";
+folder_path = "All_CSV_Files_AvgSeed";
 
 % Initialize arrays to store the data
 dx_values = [];
