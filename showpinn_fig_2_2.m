@@ -1,7 +1,7 @@
-x = readmatrix('path(X grid values)'); % Path to X values
-t = readmatrix('path(T grid values)'); % Path to T values
-exact = readmatrix('path(Exact Solution values)');   % Path to Exact values
-pinn = readmatrix('path(PINN Solution values)'); % Path to Predicted values
+x = readmatrix('MATLAB_PINN_Data/X_Overall_Grid.csv'); % Path to X values
+t = readmatrix('MATLAB_PINN_Data/T_Overall_Grid.csv'); % Path to T values
+exact = readmatrix('MATLAB_PINN_Data/exact_Solution.csv');   % Path to Exact values
+pinn = readmatrix('MATLAB_PINN_Data/PINN_Predict.csv'); % Path to Predicted values
 
 % Remove NaN values (if necessary)
 x(isnan(x)) = [];
@@ -29,7 +29,7 @@ disp(['Size of pinn: ', num2str(size(pinn))]);
 Exact_Reshaped = griddata(x, t, exact, X, T, 'cubic');  % Interpolate Exact data
 PINN_Reshaped = griddata(x, t, pinn, X, T, 'cubic');    % Interpolate PINN predictions
 
-% Create figure
+%% Create figure
 figure;
 
 % Create surface plot for exact values
@@ -37,11 +37,12 @@ figure;
 %hold on; % Hold on to overlay the next surface
 
 % Create surface plot for PINN predictions
-surf(X, T, PINN_Reshaped, 'FaceColor', 'interp', 'EdgeColor', 'none', 'FaceAlpha', 0.5, 'DisplayName', 'PINN Predictions'); 
+surf(X, T, PINN_Reshaped, 'FaceColor', 'interp', 'EdgeColor', 'none', 'DisplayName', 'PINN Predictions'); 
 
 % Set labels and title
 xlabel('Time (t)');
 ylabel('Space (x)');
-zlabel('Temperature');
+zlabel('Temperature (u)');
 title('Temperature Distribution u(x,t)');
-
+view(-30,30)
+exportgraphics(gcf, 'fig_pinn.png', 'Resolution', 300);

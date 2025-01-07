@@ -50,60 +50,84 @@ mse_grid = reshape(MSE_values, nx, nt);
 mae_grid = reshape(max_errors, nx, nt);
 
 % Calculate correlation between MSE and max errors
-correlation = corr(MSE_values, max_errors);
-fprintf('Correlation between MSE and max errors: %.4f\n', correlation);
+% correlation = corr(MSE_values, max_errors);
+% fprintf('Correlation between MSE and max errors: %.4f\n', correlation);
 %% 
 
 % Create contour plot for MSE
-figure;
-contourf(dx_grid, dt_grid, log10(mse_grid), 'ShowText', 'on');
-xticks(xarray);
-xticklabels(arrayfun(@num2str, xarray, 'UniformOutput', false));
-yticks(tarray);
-yticklabels(arrayfun(@num2str, tarray, 'UniformOutput', false));
-xlabel('dx');
-ylabel('dt');
-title('log10(MSE)');
+% figure;
+% contourf(dx_grid, dt_grid, log10(mse_grid), 'ShowText', 'on');
+% xticks(xarray);
+% xticklabels(arrayfun(@num2str, xarray, 'UniformOutput', false));
+% yticks(tarray);
+% yticklabels(arrayfun(@num2str, tarray, 'UniformOutput', false));
+% xlabel('dx');
+% ylabel('dt');
+% title('log10(MSE)');
 %% 
 
 % Create log-log contour plot for MSE
+
+% level = -6:1:0;
+
+% interpolation for smoother contour line
+logdx = log10(dx_grid);
+logdt = log10(dt_grid);
+logdx_refined = linspace(min(logdx(:)), max(logdx(:)), 100);
+logdt_refined = linspace(min(logdt(:)), max(logdt(:)), 100);
+[DX, DT] = meshgrid(logdx_refined, logdt_refined);
+ % Change this to switch between MSE and max errors
+error = mse_grid;
+whicherr = 'MSE'
+error_refined = griddata(logdx(:), logdt(:), log10(error(:)), DX, DT, 'cubic');
+
+% refine the grid for smoother contour plot
 figure;
-contourf(log10(dx_grid), log10(dt_grid), log10(mse_grid), 'ShowText', 'on');
-xticks(log10(xarray));
-xticklabels(arrayfun(@num2str, xarray, 'UniformOutput', false));
-yticks(log10(tarray));
-yticklabels(arrayfun(@num2str, tarray, 'UniformOutput', false));
-xlabel('log(dx)');
-ylabel('log(dt)');
-title('log10(MSE) (log-log plot)');
+contourf(DX, DT, error_refined, 'ShowText', 'on');
+
+xticks(log10(xarray(1:2:end)));
+xticklabels(arrayfun(@num2str, xarray(1:2:end), 'UniformOutput', false));
+yticks(log10(tarray(1:2:end)));
+yticklabels(arrayfun(@num2str, tarray(1:2:end), 'UniformOutput', false));
+xlabel('Δx');
+ylabel('Δt');
+% title(sprintf('log_{10}(%s)', whicherr));
+exportgraphics(gcf, 'fig_error_contour.png', 'Resolution', 300);
 %% 
 
 % Plot MSE vs dx for fixed dt
 figure;
-i = 4;  % Change this to select different dt values
+i = 1;  % Change this to select different dt values
 dxgridi = dx_grid(i,:)
 xx = log10(dx_grid(i,:));
-yy = log10(mse_grid(i,:));
-Const = polyfit(xx, yy, 1);
-scatter(xx, yy)
+yy = log10(error(i,:));
+
+start = 6;
+Const = polyfit(xx(start:end), yy(start:end), 1);
+scatter(xx, yy, 'filled');
 hold on;
-plot(xx, Const(1)*xx + Const(2));
-xlabel('log(dx)');
-ylabel('log(MSE)');
-title(sprintf('MSE vs dx for fixed dt = %.4f', dt_values(i)));
-legend('Data', sprintf('Fit: y = %.2fx + %.2f', Const(1), Const(2)));
+plot(xx(start:end), Const(1)*xx(start:end) + Const(2), 'LineWidth', 1.5);
+xlabel('log_{10}(Δx)');
+ylabel(sprintf('log_{10}(%s)', whicherr));
+title(sprintf('%s vs Δx for fixed Δt = %.4f', whicherr, dt_values(i)));  % Use dt_grid instead of dt_values
+legend('Data', sprintf('slope = %.2f', Const(1)),'Location','northwest');
+exportgraphics(gcf, 'fig_error_vs_dx.png', 'Resolution', 300);
 %% 
 % Plot MSE vs dt for fixed dx
 figure;
 j = 1; % Change this to select different dx values
 dtgridj = dt_grid(:,j);
 tt = log10(dt_grid(:,j));
-ee = log10(mse_grid(:,j));
-Const = polyfit(tt, ee, 1);
-scatter(tt, ee);
+ee = log10(error(:,j));
+
+start = 5;
+Const = polyfit(tt(start:end), ee(start:end), 1);
+
+scatter(tt, ee, 'filled');
 hold on;
-plot(tt, Const(1)*tt + Const(2));
-xlabel('log(dt)');
-ylabel('log(MSE)');
-title(sprintf('MSE vs dt for fixed dx = %.4f', dx_grid(1,j)));  % Use dx_grid instead of dx_values
-legend('Data', sprintf('Fit: y = %.2fx + %.2f', Const(1), Const(2)));
+plot(tt(start:end), Const(1)*tt(start:end) + Const(2), 'LineWidth', 1.5);
+xlabel('log_{10}(Δt)');
+ylabel(sprintf('log_{10}(%s)', whicherr));
+title(sprintf('%s vs Δt for fixed Δx = %.4f', whicherr, dx_grid(1,j)));  % Use dx_grid instead of dx_values
+legend('Data', sprintf('slope = %.2f', Const(1)), 'Location','northwest');
+exportgraphics(gcf, 'fig_error_vs_dt.png', 'Resolution', 300);

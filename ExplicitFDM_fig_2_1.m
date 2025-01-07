@@ -14,7 +14,7 @@ if S > 0.5
 end
 
 % Grid initialization
-x = linspace(0, L, Nx);
+x = linspace(0, L, Nx); 
 t = linspace(0, T, Nt);
 u = zeros(Nx, Nt);
 
@@ -41,11 +41,11 @@ xlabel('Space (x)');
 ylabel('Time (t)');
 zlabel('Temperature (u)');
 title('Temperature Distribution u(x,t)');
+view(60,30)
+exportgraphics(gcf, 'fig_fdm.png', 'Resolution', 300);
 
 
-
-
-% Exact solution
+%% Exact solution
 u_exact = zeros(Nx, Nt);
 for j = 1:Nt
     u_exact(:, j) = exp(-pi^2 * D * t(j)) * sin(pi * x);
